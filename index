@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EOS Follow Time Cue List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-main: #050608;
+      --panel-bg: #14161b;
+      --panel-border: #292c33;
+      --accent: #4da3ff;
+      --accent-soft: rgba(77, 163, 255, 0.2);
+      --text-main: #f5f7ff;
+      --text-muted: #9ea3b3;
+      --danger: #ff5c5c;
+      --warn: #f1c40f;
+      --input-bg: #101218;
+      --input-border: #2b303a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #192033 0, #050608 55%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .top-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 7px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: #232632;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+      white-space: nowrap;
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #020308;
+      font-weight: 600;
+      box-shadow: 0 0 18px var(--accent-soft);
+    }
+
+    button.outline {
+      background: transparent;
+      border-color: var(--panel-border);
+    }
+
+    button.danger {
+      border-color: rgba(255, 92, 92, 0.5);
+      color: #ffb4b4;
+      background: rgba(255, 92, 92, 0.1);
+    }
+
+    button:hover {
+      background: #2c313d;
+      transform: translateY(-1px);
+    }
+
+    button.primary:hover {
+      background: #6bb1ff;
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .panel {
+      background: linear-gradient(145deg, #14161b, #0e1016);
+      border-radius: 18px;
+      border: 1px solid var(--panel-border);
+      padding: 16px 18px 18px;
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(255, 255, 255, 0.02);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .panel-title {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .quick-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .quick-hint code {
+      font-family: monospace;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+      font-size: 0.9rem;
+    }
+
+    thead {
+      background: #181b23;
+    }
+
+    th, td {
+      padding: 7px 6px;
+      text-align: left;
+    }
+
+    th {
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid #232633;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    tbody tr:hover {
+      background: rgba(77, 163, 255, 0.06);
+    }
+
+    .col-cue {
+      width: 70px;
+    }
+
+    .col-time {
+      width: 150px;
+    }
+
+    .col-follow {
+      width: 220px;
+      font-family: monospace;
+    }
+
+    .col-actions {
+      width: 60px;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 6px 7px;
+      border-radius: 8px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    input[type="text"]::placeholder {
+      color: #5f6474;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+      background: #141722;
+    }
+
+    .invalid {
+      border-color: var(--danger) !important;
+      box-shadow: 0 0 0 1px rgba(255, 92, 92, 0.25);
+    }
+
+    .follow-cell {
+      font-family: "JetBrains Mono", "SF Mono", Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85rem;
+      color: #cfd3e6;
+    }
+
+    .follow-empty {
+      color: #555a6b;
+      font-style: italic;
+    }
+
+    .follow-error {
+      color: var(--danger);
+    }
+
+    .delete-btn {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: transparent;
+      border-color: rgba(255, 92, 92, 0.6);
+      color: #ffaaaa;
+      font-size: 0.8rem;
+    }
+
+    .delete-btn:hover {
+      background: rgba(255, 92, 92, 0.08);
+    }
+
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .left-controls,
+    .right-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .tag {
+      font-size: 0.8rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+    }
+
+    .messages {
+      margin-top: 8px;
+      min-height: 18px;
+      font-size: 0.8rem;
+    }
+
+    .warning {
+      color: var(--warn);
+    }
+
+    .export-block {
+      margin-top: 14px;
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 10px;
+      border: 1px dashed #2c3140;
+      font-size: 0.8rem;
+    }
+
+    .export-block-title {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .export-text {
+      font-family: "JetBrains Mono", "SF Mono", Menlo, Monaco, Consolas, monospace;
+      white-space: pre-wrap;
+      max-height: 90px;
+      overflow: auto;
+      color: #d4d8ea;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 12px;
+      }
+      .panel {
+        padding: 12px;
+      }
+      th:nth-child(4),
+      td:nth-child(4) {
+        display: none; /* hide notes column on tiny screens */
+      }
+      .col-follow {
+        width: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header-bar">
+      <div class="title-wrap">
+        <h1>EOS Follow Time Planner</h1>
+        <p class="subtitle">
+          Drop in your song cue points &mdash; get EOS follow times between each cue.
+        </p>
+      </div>
+      <div class="top-controls">
+        <button class="outline" id="reset-list-btn">Reset List</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Cue List</div>
+        <div class="quick-hint">
+          Time format: <code>m:ss</code> or <code>h:mm:ss</code>
+        </div>
+      </div>
+
+      <table id="cue-table">
+        <thead>
+          <tr>
+            <th class="col-cue">Cue</th>
+            <th class="col-time">Song Time</th>
+            <th class="col-follow">Follow From Previous</th>
+            <th>Notes</th>
+            <th class="col-actions">Del</th>
+          </tr>
+        </thead>
+        <tbody id="cue-tbody">
+          <!-- rows added in JS -->
+        </tbody>
+      </table>
+
+      <div class="controls-row">
+        <div class="left-controls">
+          <button class="primary" id="add-cue-btn">+ Add Cue</button>
+          <button id="recalc-btn">Recalculate</button>
+        </div>
+        <div class="right-controls">
+          <span class="tag">Output: seconds &amp; mm:ss</span>
+        </div>
+      </div>
+
+      <div class="messages" id="messages"></div>
+
+      <div class="export-block">
+        <div class="export-block-title">Quick copy for EOS</div>
+        <div class="export-text" id="export-text">
+          <!-- generated text -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tbody = document.getElementById("cue-tbody");
+    const addCueBtn = document.getElementById("add-cue-btn");
+    const recalcBtn = document.getElementById("recalc-btn");
+    const messagesDiv = document.getElementById("messages");
+    const exportTextDiv = document.getElementById("export-text");
+    const resetListBtn = document.getElementById("reset-list-btn");
+
+    function parseTime(str) {
+      if (!str) return NaN;
+      const parts = str.split(":").map(p => p.trim());
+      if (parts.length < 2 || parts.length > 3) return NaN;
+
+      let h = 0, m = 0, s = 0;
+      if (parts.length === 2) {
+        m = Number(parts[0]);
+        s = Number(parts[1]);
+      } else {
+        h = Number(parts[0]);
+        m = Number(parts[1]);
+        s = Number(parts[2]);
+      }
+
+      if ([h, m, s].some(n => Number.isNaN(n) || n < 0)) return NaN;
+      return h * 3600 + m * 60 + s;
+    }
+
+    function formatTime(seconds) {
+      seconds = Math.floor(seconds);
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+
+      const pad2 = (n) => n.toString().padStart(2, "0");
+
+      if (h > 0) {
+        return `${h}:${pad2(m)}:${pad2(s)}`;
+      } else {
+        return `${m}:${pad2(s)}`;
+      }
+    }
+
+    function renumberCues() {
+      [...tbody.querySelectorAll("tr")].forEach((row, index) => {
+        const cueCell = row.querySelector(".cue-number");
+        cueCell.textContent = index + 1;
+      });
+    }
+
+    function recalcFollows() {
+      messagesDiv.textContent = "";
+      const rows = [...tbody.querySelectorAll("tr")];
+      let warnings = [];
+      let prevSeconds = null;
+
+      // clear export
+      let exportLines = [];
+
+      rows.forEach((row, index) => {
+        const timeInput = row.querySelector(".time-input");
+        const followCell = row.querySelector(".follow-cell");
+
+        timeInput.classList.remove("invalid");
+        followCell.textContent = "";
+        followCell.className = "follow-cell follow-empty";
+
+        const timeStr = timeInput.value.trim();
+        const currentSeconds = parseTime(timeStr);
+
+        if (timeStr && Number.isNaN(currentSeconds)) {
+          timeInput.classList.add("invalid");
+          followCell.textContent = "Invalid time";
+          followCell.classList.add("follow-error");
+          return;
+        }
+
+        const cueNumber = index + 1;
+
+        if (index === 0) {
+          // first cue: no follow; just add export line
+          if (!Number.isNaN(currentSeconds)) {
+            exportLines.push(`Cue ${cueNumber}: at ${formatTime(currentSeconds)} (song)`);
+          } else {
+            exportLines.push(`Cue ${cueNumber}: —`);
+          }
+          prevSeconds = currentSeconds;
+          followCell.textContent = "—";
+          return;
+        }
+
+        if (!Number.isNaN(currentSeconds) && !Number.isNaN(prevSeconds)) {
+          const diff = currentSeconds - prevSeconds;
+          if (diff < 0) {
+            followCell.textContent = "Negative (check order)";
+            followCell.classList.add("follow-error");
+            warnings.push(`Cue ${cueNumber} is earlier than Cue ${cueNumber - 1}.`);
+            exportLines.push(`Cue ${cueNumber}: song ${formatTime(currentSeconds)} (order?)`);
+          } else {
+            followCell.textContent = `${diff}s (${formatTime(diff)})`;
+            followCell.classList.remove("follow-empty");
+            exportLines.push(
+              `Cue ${cueNumber}: Follow ${diff}s  (from ${formatTime(prevSeconds)} → ${formatTime(currentSeconds)})`
+            );
+          }
+          prevSeconds = currentSeconds;
+        } else {
+          // missing times, keep follow empty
+          exportLines.push(`Cue ${cueNumber}: —`);
+          prevSeconds = currentSeconds;
+        }
+      });
+
+      if (warnings.length) {
+        const warn = document.createElement("div");
+        warn.className = "warning";
+        warn.textContent = warnings.join(" ");
+        messagesDiv.innerHTML = "";
+        messagesDiv.appendChild(warn);
+      } else {
+        messagesDiv.textContent = "";
+      }
+
+      exportTextDiv.textContent = exportLines.join("\n");
+    }
+
+    function addCueRow(initialTime = "", initialNote = "") {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td class="col-cue"><span class="cue-number"></span></td>
+        <td class="col-time">
+          <input type="text" class="time-input" placeholder="0:00" value="${initialTime}">
+        </td>
+        <td class="col-follow follow-cell follow-empty">—</td>
+        <td>
+          <input type="text" class="note-input" placeholder="Optional notes" value="${initialNote}">
+        </td>
+        <td class="col-actions">
+          <button class="delete-btn" type="button">X</button>
+        </td>
+      `;
+
+      const timeInput = row.querySelector(".time-input");
+      timeInput.addEventListener("input", recalcFollows);
+
+      const deleteBtn = row.querySelector(".delete-btn");
+      deleteBtn.addEventListener("click", () => {
+        row.remove();
+        renumberCues();
+        recalcFollows();
+      });
+
+      tbody.appendChild(row);
+      renumberCues();
+      recalcFollows();
+    }
+
+    function resetList() {
+      tbody.innerHTML = "";
+      addCueRow("0:00", "Start of song");
+      addCueRow("", "");
+      addCueRow("", "");
+      recalcFollows();
+    }
+
+    // init
+    resetList();
+
+    addCueBtn.addEventListener("click", () => {
+      addCueRow("", "");
+    });
+
+    recalcBtn.addEventListener("click", recalcFollows);
+    resetListBtn.addEventListener("click", resetList);
+  </script>
+</body>
+</html>
