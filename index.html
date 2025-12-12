@@ -109,19 +109,23 @@
       letter-spacing:.08em;
       font-size:.9rem;
     }
-    .hint{
-      color:var(--muted);
-      font-size:.82rem;
-      text-align:right;
-      line-height:1.25;
-      max-width:520px;
+      .hint{
+      color: var(--muted);
+      font-size: .85rem;
+      text-align: left;
+      line-height: 1.35;
+      max-width: 520px;
+      display: grid;
+      gap: 4px;
     }
+    .hint strong{ color: var(--text); font-weight: 600; }
     .hint code{
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       background: rgba(255,255,255,.04);
-      padding:2px 5px;
-      border-radius:6px;
+      padding: 1px 6px;
+      border-radius: 6px;
     }
+
 
     table{width:100%; border-collapse:collapse; margin-top:6px}
     thead{background:#181b23}
@@ -257,13 +261,10 @@
       <div class="panelTop">
         <div class="panelTitle">Cue List</div>
         <div class="hint">
-          Formats:
-          <code>min.sec</code>,
-          <code>min:sec</code>,
-          <code>hr:min:sec</code>.
-          <br>
-          Calculates when you click out of a time field (or press <code>Recalculate</code>).
-        </div>
+  <div><strong>Formats:</strong> <code>min.sec</code>, <code>min:sec</code>, <code>hr:min:sec</code></div>
+  <div><strong>Auto-carry:</strong> 12.70 → 13:10</div>
+  <div><strong>Recalc:</strong> when you leave the time box (or press <code>Recalculate</code>)</div>
+</div>
       </div>
 
       <table>
