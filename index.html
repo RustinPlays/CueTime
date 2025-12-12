@@ -19,9 +19,7 @@
       --input-border: #2b303a;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -35,11 +33,7 @@
       justify-content: center;
     }
 
-    .app {
-      width: 100%;
-      max-width: 1100px;
-      margin: auto;
-    }
+    .app { width: 100%; max-width: 1100px; margin: auto; }
 
     .header-bar {
       display: flex;
@@ -50,11 +44,7 @@
       flex-wrap: wrap;
     }
 
-    .title-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+    .title-wrap { display: flex; flex-direction: column; gap: 4px; }
 
     h1 {
       margin: 0;
@@ -63,17 +53,9 @@
       text-transform: uppercase;
     }
 
-    .subtitle {
-      margin: 0;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
+    .subtitle { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
 
-    .top-controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    .top-controls { display: flex; gap: 8px; flex-wrap: wrap; }
 
     button {
       border-radius: 999px;
@@ -98,10 +80,7 @@
       box-shadow: 0 0 18px var(--accent-soft);
     }
 
-    button.outline {
-      background: transparent;
-      border-color: var(--panel-border);
-    }
+    button.outline { background: transparent; border-color: var(--panel-border); }
 
     button.danger {
       border-color: rgba(255, 92, 92, 0.5);
@@ -109,18 +88,9 @@
       background: rgba(255, 92, 92, 0.1);
     }
 
-    button:hover {
-      background: #2c313d;
-      transform: translateY(-1px);
-    }
-
-    button.primary:hover {
-      background: #6bb1ff;
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
+    button:hover { background: #2c313d; transform: translateY(-1px); }
+    button.primary:hover { background: #6bb1ff; }
+    button:active { transform: translateY(0); }
 
     .panel {
       background: linear-gradient(145deg, #14161b, #0e1016);
@@ -161,21 +131,10 @@
       border-radius: 4px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 4px;
-      font-size: 0.9rem;
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 0.9rem; }
+    thead { background: #181b23; }
 
-    thead {
-      background: #181b23;
-    }
-
-    th, td {
-      padding: 7px 6px;
-      text-align: left;
-    }
+    th, td { padding: 7px 6px; text-align: left; }
 
     th {
       font-weight: 500;
@@ -186,31 +145,13 @@
       border-bottom: 1px solid #232633;
     }
 
-    tbody tr:nth-child(even) {
-      background: rgba(255, 255, 255, 0.01);
-    }
+    tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.01); }
+    tbody tr:hover { background: rgba(77, 163, 255, 0.06); }
 
-    tbody tr:hover {
-      background: rgba(77, 163, 255, 0.06);
-    }
-
-    .col-cue {
-      width: 70px;
-    }
-
-    .col-time {
-      width: 150px;
-    }
-
-    .col-follow {
-      width: 220px;
-      font-family: monospace;
-    }
-
-    .col-actions {
-      width: 60px;
-      text-align: center;
-    }
+    .col-cue { width: 70px; }
+    .col-time { width: 160px; }
+    .col-follow { width: 220px; font-family: monospace; }
+    .col-actions { width: 60px; text-align: center; }
 
     input[type="text"] {
       width: 100%;
@@ -224,9 +165,7 @@
       transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
     }
 
-    input[type="text"]::placeholder {
-      color: #5f6474;
-    }
+    input[type="text"]::placeholder { color: #5f6474; }
 
     input[type="text"]:focus {
       border-color: var(--accent);
@@ -245,14 +184,8 @@
       color: #cfd3e6;
     }
 
-    .follow-empty {
-      color: #555a6b;
-      font-style: italic;
-    }
-
-    .follow-error {
-      color: var(--danger);
-    }
+    .follow-empty { color: #555a6b; font-style: italic; }
+    .follow-error { color: var(--danger); }
 
     .delete-btn {
       padding: 4px 8px;
@@ -263,9 +196,7 @@
       font-size: 0.8rem;
     }
 
-    .delete-btn:hover {
-      background: rgba(255, 92, 92, 0.08);
-    }
+    .delete-btn:hover { background: rgba(255, 92, 92, 0.08); }
 
     .controls-row {
       display: flex;
@@ -293,15 +224,8 @@
       color: var(--text-muted);
     }
 
-    .messages {
-      margin-top: 8px;
-      min-height: 18px;
-      font-size: 0.8rem;
-    }
-
-    .warning {
-      color: var(--warn);
-    }
+    .messages { margin-top: 8px; min-height: 18px; font-size: 0.8rem; }
+    .warning { color: var(--warn); }
 
     .export-block {
       margin-top: 14px;
@@ -330,19 +254,10 @@
     }
 
     @media (max-width: 720px) {
-      body {
-        padding: 12px;
-      }
-      .panel {
-        padding: 12px;
-      }
-      th:nth-child(4),
-      td:nth-child(4) {
-        display: none; /* hide notes column on tiny screens */
-      }
-      .col-follow {
-        width: 180px;
-      }
+      body { padding: 12px; }
+      .panel { padding: 12px; }
+      th:nth-child(4), td:nth-child(4) { display: none; } /* hide notes column */
+      .col-follow { width: 180px; }
     }
   </style>
 </head>
@@ -364,7 +279,7 @@
       <div class="panel-header">
         <div class="panel-title">Cue List</div>
         <div class="quick-hint">
-          Time format: <code>m:ss</code>, <code>h:mm:ss</code> or just digits (143 → 1:43)
+          Time format: <code>m.ss</code> (12.57 → 12:57), <code>m:ss</code>, <code>h:mm:ss</code>
         </div>
       </div>
 
@@ -408,32 +323,45 @@
     const exportTextDiv = document.getElementById("export-text");
     const resetListBtn = document.getElementById("reset-list-btn");
 
-    // auto-format digit-only input into mm:ss / hh:mm:ss
-    function autoFormatTime(str) {
-      const trimmed = str.trim();
-      if (!trimmed) return "";
-
-      // If it already looks like m:ss or h:mm:ss, leave it
-      if (/^\d+:\d+(:\d+)?$/.test(trimmed)) return trimmed;
-
-      let v = trimmed.replace(/[^0-9]/g, "");
-      if (!v.length) return "";
-
-      if (v.length === 1) return `0:0${v}`;             // 5 -> 0:05
-      if (v.length === 2) return `0:${v}`;              // 43 -> 0:43
-      if (v.length === 3) return `${v[0]}:${v.slice(1)}`;         // 143 -> 1:43
-      if (v.length === 4) return `${v.slice(0,2)}:${v.slice(2)}`; // 2105 -> 21:05
-
-      // 5+ digits -> hh:mm:ss
-      const s = v.slice(-2);
-      const m = v.slice(-4, -2);
-      const h = v.slice(0, -4);
-      return `${h}:${m}:${s}`;
-    }
-
+    // Supports:
+    // - m.ss  (12.57 -> 12:57)  dot is a separator, NOT a decimal
+    // - h.mm.ss (1.02.30 -> 1:02:30)
+    // - m:ss
+    // - h:mm:ss
     function parseTime(str) {
       if (!str) return NaN;
-      const parts = str.split(":").map(p => p.trim());
+      const trimmed = str.trim();
+      if (!trimmed) return NaN;
+
+      // Dot formats
+      if (/^\d+\.\d{1,2}(\.\d{1,2})?$/.test(trimmed)) {
+        const parts = trimmed.split(".");
+        const toNum = (t) => Number(t);
+
+        // m.ss
+        if (parts.length === 2) {
+          const m = toNum(parts[0]);
+          let sStr = parts[1];
+          if (sStr.length === 1) sStr = "0" + sStr; // 12.7 -> 12:07
+          const s = toNum(sStr);
+          if ([m, s].some(n => Number.isNaN(n) || n < 0) || s >= 60) return NaN;
+          return m * 60 + s;
+        }
+
+        // h.mm.ss
+        if (parts.length === 3) {
+          const h = toNum(parts[0]);
+          const m = toNum(parts[1].padStart(2, "0"));
+          const s = toNum(parts[2].padStart(2, "0"));
+          if ([h, m, s].some(n => Number.isNaN(n) || n < 0) || m >= 60 || s >= 60) return NaN;
+          return h * 3600 + m * 60 + s;
+        }
+      }
+
+      // Colon formats
+      if (!/^\d+:\d+(:\d+)?$/.test(trimmed)) return NaN;
+
+      const parts = trimmed.split(":").map(p => p.trim());
       if (parts.length < 2 || parts.length > 3) return NaN;
 
       let h = 0, m = 0, s = 0;
@@ -446,12 +374,12 @@
         s = Number(parts[2]);
       }
 
-      if ([h, m, s].some(n => Number.isNaN(n) || n < 0)) return NaN;
+      if ([h, m, s].some(n => Number.isNaN(n) || n < 0) || m >= 60 || s >= 60) return NaN;
       return h * 3600 + m * 60 + s;
     }
 
     function formatTime(seconds) {
-      seconds = Math.floor(seconds);
+      seconds = Math.round(seconds);
       const h = Math.floor(seconds / 3600);
       const m = Math.floor((seconds % 3600) / 60);
       const s = seconds % 60;
@@ -512,10 +440,11 @@
             warnings.push(`Cue ${cueNumber} is earlier than Cue ${cueNumber - 1}.`);
             exportLines.push(`Cue ${cueNumber}: song ${formatTime(currentSeconds)} (order?)`);
           } else {
-            followCell.textContent = `${diff}s (${formatTime(diff)})`;
+            const diffInt = Math.round(diff);
+            followCell.textContent = `${diffInt}s (${formatTime(diffInt)})`;
             followCell.classList.remove("follow-empty");
             exportLines.push(
-              `Cue ${cueNumber}: Follow ${diff}s  (from ${formatTime(prevSeconds)} → ${formatTime(currentSeconds)})`
+              `Cue ${cueNumber}: Follow ${diffInt}s  (from ${formatTime(prevSeconds)} → ${formatTime(currentSeconds)})`
             );
           }
           prevSeconds = currentSeconds;
@@ -543,7 +472,7 @@
       row.innerHTML = `
         <td class="col-cue"><span class="cue-number"></span></td>
         <td class="col-time">
-          <input type="text" class="time-input" placeholder="0:00" value="${initialTime}">
+          <input type="text" class="time-input" placeholder="12.57 or 12:57" value="${initialTime}">
         </td>
         <td class="col-follow follow-cell follow-empty">—</td>
         <td>
@@ -555,21 +484,12 @@
       `;
 
       const timeInput = row.querySelector(".time-input");
-      let formatTimeout = null;
+      let recalcTimeout = null;
 
-      // Debounced auto-format while typing
+      // NO auto-formatting, ever. Just recalc after typing.
       timeInput.addEventListener("input", () => {
-        clearTimeout(formatTimeout);
-        formatTimeout = setTimeout(() => {
-          timeInput.value = autoFormatTime(timeInput.value);
-          recalcFollows();
-        }, 400); // 0.4s after last key
-      });
-
-      // Backup: also normalise on blur
-      timeInput.addEventListener("blur", () => {
-        timeInput.value = autoFormatTime(timeInput.value);
-        recalcFollows();
+        clearTimeout(recalcTimeout);
+        recalcTimeout = setTimeout(() => recalcFollows(), 200);
       });
 
       row.querySelector(".delete-btn").addEventListener("click", () => {
@@ -585,7 +505,7 @@
 
     function resetList() {
       tbody.innerHTML = "";
-      addCueRow("0:00", "Start of song");
+      addCueRow("0.00", "Start of song");
       addCueRow("", "");
       addCueRow("", "");
       recalcFollows();
