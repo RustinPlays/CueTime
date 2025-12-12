@@ -82,12 +82,6 @@
 
     button.outline { background: transparent; border-color: var(--panel-border); }
 
-    button.danger {
-      border-color: rgba(255, 92, 92, 0.5);
-      color: #ffb4b4;
-      background: rgba(255, 92, 92, 0.1);
-    }
-
     button:hover { background: #2c313d; transform: translateY(-1px); }
     button.primary:hover { background: #6bb1ff; }
     button:active { transform: translateY(0); }
@@ -149,7 +143,7 @@
     tbody tr:hover { background: rgba(77, 163, 255, 0.06); }
 
     .col-cue { width: 70px; }
-    .col-time { width: 160px; }
+    .col-time { width: 170px; }
     .col-follow { width: 220px; font-family: monospace; }
     .col-actions { width: 60px; text-align: center; }
 
@@ -256,7 +250,7 @@
     @media (max-width: 720px) {
       body { padding: 12px; }
       .panel { padding: 12px; }
-      th:nth-child(4), td:nth-child(4) { display: none; } /* hide notes column */
+      th:nth-child(4), td:nth-child(4) { display: none; }
       .col-follow { width: 180px; }
     }
   </style>
@@ -279,7 +273,7 @@
       <div class="panel-header">
         <div class="panel-title">Cue List</div>
         <div class="quick-hint">
-          Time format: <code>m.ss</code> (12.57 → 12:57), <code>m:ss</code>, <code>h:mm:ss</code>
+          Time: <code>m.ss</code> (12.57 → 12:57, 12.70 → 13:10), <code>m:ss</code>, <code>h:mm:ss</code>
         </div>
       </div>
 
@@ -323,39 +317,67 @@
     const exportTextDiv = document.getElementById("export-text");
     const resetListBtn = document.getElementById("reset-list-btn");
 
+    // No auto-formatting / no rewriting of your input.
+    // Recalc happens ONLY when you click out (blur) or press Recalculate.
+
     // Supports:
-    // - m.ss  (12.57 -> 12:57)  dot is a separator, NOT a decimal
+    // - m.ss  (12.57 -> 12:57) dot is a separator, NOT a decimal
     // - h.mm.ss (1.02.30 -> 1:02:30)
     // - m:ss
     // - h:mm:ss
+    //
+    // Auto-carry examples:
+    // - 12.70 -> 13:10
+    // - 0:75  -> 1:15
+    // - 1.99  -> 2:39
     function parseTime(str) {
       if (!str) return NaN;
       const trimmed = str.trim();
       if (!trimmed) return NaN;
 
       // Dot formats
-      if (/^\d+\.\d{1,2}(\.\d{1,2})?$/.test(trimmed)) {
-        const parts = trimmed.split(".");
-        const toNum = (t) => Number(t);
+      if (/^\d+\.\d+(\.\d+)?$/.test(trimmed)) {
+        const parts = trimmed.split(".").map(p => p.trim());
+        const nums = parts.map(p => Number(p));
+        if (nums.some(n => Number.isNaN(n) || n < 0)) return NaN;
 
         // m.ss
-        if (parts.length === 2) {
-          const m = toNum(parts[0]);
-          let sStr = parts[1];
-          if (sStr.length === 1) sStr = "0" + sStr; // 12.7 -> 12:07
-          const s = toNum(sStr);
-          if ([m, s].some(n => Number.isNaN(n) || n < 0) || s >= 60) return NaN;
+        if (nums.length === 2) {
+          let m = nums[0];
+
+          // if seconds chunk is 1 digit (12.7), treat as 07 sec
+          const sChunk = parts[1];
+          let s = (sChunk.length === 1) ? Number("0" + sChunk) : nums[1];
+          if (Number.isNaN(s) || s < 0) return NaN;
+
+          // auto-carry seconds -> minutes
+          m += Math.floor(s / 60);
+          s = s % 60;
+
           return m * 60 + s;
         }
 
         // h.mm.ss
-        if (parts.length === 3) {
-          const h = toNum(parts[0]);
-          const m = toNum(parts[1].padStart(2, "0"));
-          const s = toNum(parts[2].padStart(2, "0"));
-          if ([h, m, s].some(n => Number.isNaN(n) || n < 0) || m >= 60 || s >= 60) return NaN;
+        if (nums.length === 3) {
+          let h = nums[0];
+
+          const mChunk = parts[1];
+          const sChunk = parts[2];
+          let m = (mChunk.length === 1) ? Number("0" + mChunk) : nums[1];
+          let s = (sChunk.length === 1) ? Number("0" + sChunk) : nums[2];
+          if ([m, s].some(n => Number.isNaN(n) || n < 0)) return NaN;
+
+          // auto-carry
+          m += Math.floor(s / 60);
+          s = s % 60;
+
+          h += Math.floor(m / 60);
+          m = m % 60;
+
           return h * 3600 + m * 60 + s;
         }
+
+        return NaN;
       }
 
       // Colon formats
@@ -364,18 +386,16 @@
       const parts = trimmed.split(":").map(p => p.trim());
       if (parts.length < 2 || parts.length > 3) return NaN;
 
-      let h = 0, m = 0, s = 0;
-      if (parts.length === 2) {
-        m = Number(parts[0]);
-        s = Number(parts[1]);
-      } else {
-        h = Number(parts[0]);
-        m = Number(parts[1]);
-        s = Number(parts[2]);
-      }
+      const nums = parts.map(p => Number(p));
+      if (nums.some(n => Number.isNaN(n) || n < 0)) return NaN;
 
-      if ([h, m, s].some(n => Number.isNaN(n) || n < 0) || m >= 60 || s >= 60) return NaN;
-      return h * 3600 + m * 60 + s;
+      if (parts.length === 2) {
+        // m:ss (auto-carry naturally via total seconds)
+        return nums[0] * 60 + nums[1];
+      } else {
+        // h:mm:ss (auto-carry naturally via total seconds)
+        return nums[0] * 3600 + nums[1] * 60 + nums[2];
+      }
     }
 
     function formatTime(seconds) {
@@ -484,12 +504,10 @@
       `;
 
       const timeInput = row.querySelector(".time-input");
-      let recalcTimeout = null;
 
-      // NO auto-formatting, ever. Just recalc after typing.
-      timeInput.addEventListener("input", () => {
-        clearTimeout(recalcTimeout);
-        recalcTimeout = setTimeout(() => recalcFollows(), 200);
+      // Only recalc when you click out of the time field (or hit the Recalculate button)
+      timeInput.addEventListener("blur", () => {
+        recalcFollows();
       });
 
       row.querySelector(".delete-btn").addEventListener("click", () => {
